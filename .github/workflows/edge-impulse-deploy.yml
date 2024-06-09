@@ -13,44 +13,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout firmware source code
         uses: actions/checkout@v3
 
-      - name: Build and deploy Edge Impulse Model for Arduino
+      - name: Build and deploy Edge Impulse Model
         uses: edgeimpulse/build-deploy@v1
         id: build-deploy-arduino
         with:
           project_id: ${{ secrets.PROJECT_ID }}
           api_key: ${{ secrets.API_KEY }}
-          deployment_type: "arduino"
+          #'deployment_type: "arduino"
 
-      - name: Extract Arduino Library
+      - name: Extract the Model and SDK
         run: |
-          mkdir arduino-library
-          unzip -q "${{ steps.build-deploy-arduino.outputs.deployment_file_name }}" -d arduino-library
-          mv arduino-library/ei_arduino/ .
-          rm -rf "${{ steps.build-deploy-arduino.outputs.deployment_file_name }}"
-
-      - name: Build and deploy Edge Impulse Model for Mobile
-        uses: edgeimpulse/build-deploy@v1
-        id: build-deploy-mobile
-        with:
-          project_id: ${{ secrets.PROJECT_ID }}
-          api_key: ${{ secrets.API_KEY }}
-          deployment_type: "tensorflow-lite"
-
-      - name: Extract TensorFlow Lite Model
-        run: |
-          mkdir tflite-model
-          unzip -q "${{ steps.build-deploy-mobile.outputs.deployment_file_name }}" -d tflite-model
-          mv tflite-model/tflite-model.tflite ./model.tflite
-          rm -rf "${{ steps.build-deploy-mobile.outputs.deployment_file_name }}"
-          rm -rf tflite-model/
-
-      - name: Build Android App
-        run: |
-          ./gradlew assembleRelease
-
-      - name: Build iOS App
-        run: |
-          xcodebuild -workspace MyApp.xcworkspace -scheme MyApp -sdk iphoneos -configuration Release
+          mkdir temp
+          unzip -q "${{ steps.build-deploy.outputs.deployment_file_name }}" -d temp
+          mv temp/edge-impulse-sdk/ .
+          mv temp/model-parameters/ .
+          mv temp/tflite-model/ .
+          rm -rf "${{ steps.build-deploy.outputs.deployment_file_name }}"
+          rm -rf temp/    
