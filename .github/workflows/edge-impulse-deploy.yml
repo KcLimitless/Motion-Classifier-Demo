@@ -14,15 +14,20 @@ jobs:
 
     steps:
       - name: Checkout firmware source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  # Updated to use Node.js 20
+
+      # Set up Node.js 20 environment
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
       - name: Build and deploy Edge Impulse Model
-        uses: edgeimpulse/build-deploy@v1
-        id: build-deploy-arduino
+        uses: edgeimpulse/build-deploy@v1  # The latest version available for Edge Impulse
+        id: build-deploy
         with:
           project_id: ${{ secrets.PROJECT_ID }}
           api_key: ${{ secrets.API_KEY }}
-          #'deployment_type: "arduino"
 
       - name: Extract the Model and SDK
         run: |
@@ -32,4 +37,4 @@ jobs:
           mv temp/model-parameters/ .
           mv temp/tflite-model/ .
           rm -rf "${{ steps.build-deploy.outputs.deployment_file_name }}"
-          rm -rf temp/    
+          rm -rf temp/
