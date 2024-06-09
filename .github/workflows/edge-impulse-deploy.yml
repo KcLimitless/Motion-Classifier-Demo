@@ -14,10 +14,10 @@ jobs:
 
     steps:
       - name: Checkout firmware source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build and deploy Edge Impulse Model
-        uses: edgeimpulse/build-deploy@v1
+        uses: edgeimpulse/build-deploy@v2
         id: build-deploy-arduino
         with:
           project_id: ${{ secrets.PROJECT_ID }}
